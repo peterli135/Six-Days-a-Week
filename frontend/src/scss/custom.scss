@@ -1,0 +1,49 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../../node_modules/bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+$bd-lightblue: #D2DCE7;
+$bd-lightblue-active: #BDCFE2;
+
+// 3. Include remainder of required Bootstrap stylesheets
+@import "../../node_modules/bootstrap/scss/variables";
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+@import "../../node_modules/bootstrap/scss/maps";
+@import "../../node_modules/bootstrap/scss/mixins";
+@import "../../node_modules/bootstrap/scss/root";
+
+// 6. Optionally include any other parts as needed
+@import "../../node_modules/bootstrap/scss/utilities";
+@import "../../node_modules/bootstrap/scss/reboot";
+@import "../../node_modules/bootstrap/scss/type";
+@import "../../node_modules/bootstrap/scss/images";
+@import "../../node_modules/bootstrap/scss/containers";
+@import "../../node_modules/bootstrap/scss/grid";
+@import "../../node_modules/bootstrap/scss/helpers";
+
+.btn-bd-primary {
+    --bs-btn-font-weight: 600;
+    --bs-btn-font-size: 22px;
+    --bs-btn-color: var(--bs-white);
+    --bs-btn-bg: $bd-lightblue;
+    --bs-btn-border-color: $bd-lightblue;
+    --bs-btn-border-radius: 9999px;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: #{shade-color($bd-lightblue, 5%)};
+    --bs-btn-hover-border-color: #{shade-color($bd-lightblue, 5%)};
+    --bs-btn-focus-shadow-rgb: $bd-lightblue;
+    --bs-btn-active-color: var(--bs-btn-hover-color);
+    --bs-btn-active-bg: #{$bd-lightblue};
+    --bs-btn-active-border-color: #{shade-color($bd-lightblue, 5%)};
+    transition: background-color .2s linear, color .2s linear;
+}
+
+.btn-bd-primary.active-nav {
+    --bs-btn-bg: #{$bd-lightblue-active};
+    --bs-btn-hover-bg: #{$bd-lightblue-active};
+    --bs-btn-active-bg: #{$bd-lightblue-active};
+    --bs-btn-active-border-color: #{$bd-lightblue-active};
+}
