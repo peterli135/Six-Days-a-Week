@@ -47,3 +47,46 @@ $bd-lightblue-active: #BDCFE2;
     --bs-btn-active-bg: #{$bd-lightblue-active};
     --bs-btn-active-border-color: #{$bd-lightblue-active};
 }
+
+.modal-60w {
+    min-width: 60%;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 480px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-signin .checkbox {
+    font-weight: 400;
+}
+
+.form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-floating-label label {
+    transition: 300ms;
+}
+
+.form-label {
+    transition: 300ms;
+}
+
+.form-modal {
+    transition: 300ms;
+}
+
+.accordion-collapse {
+    transition: 300ms;
+}
+
+.accordion-header:hover {
+    transition: 300ms;
+    opacity: 1.2;
+}
