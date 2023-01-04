@@ -5,6 +5,8 @@ import (
 	"server/database"
 	"server/helper"
 	"server/models"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -152,6 +154,30 @@ func GetUserWorkouts() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, workouts)
+	}
+}
+
+func GetUserWorkoutsCurrentYear() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// check if there is a valid cookie (meaning user is logged in)
+		cookie, err := c.Cookie("jwt")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
+			return
+		}
+		user, msg := helper.AuthenticateUser(cookie)
+		if msg != "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
+			return
+		}
+
+		currentYearWorkouts, err := database.GetCurrentYearWorkoutsByUser(user.ID, strconv.Itoa(time.Now().Year()))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+
+		c.JSON(http.StatusOK, currentYearWorkouts)
 	}
 }
 

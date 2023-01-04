@@ -16,5 +16,6 @@ func UserRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("/api/exercises", controllers.AddMultipleExercises())
 	incomingRoutes.POST("/api/workoutdate", controllers.AddWorkoutDate())
 	incomingRoutes.GET("/api/user/workouts", controllers.GetUserWorkouts())
+	incomingRoutes.GET("/api/user/workouts/currentyear", controllers.GetUserWorkoutsCurrentYear())
 	incomingRoutes.GET("/api/user/workout/:id", controllers.GetExercisesInWorkout())
 }

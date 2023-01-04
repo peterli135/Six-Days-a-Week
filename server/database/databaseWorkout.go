@@ -76,13 +76,40 @@ func InsertWorkoutDate(WorkoutDate *models.WorkoutDate) (interface{}, error) {
 }
 
 func GetWorkoutsByUser(userID primitive.ObjectID) ([]primitive.M, error) {
-	var workouts []bson.M
-
 	cursor, err := workoutDateCollection.Find(context.TODO(), bson.M{"UserID": userID})
 	if err != nil {
 		return nil, err
 	}
 
+	var workouts []bson.M
+	if err = cursor.All(context.TODO(), &workouts); err != nil {
+		return nil, err
+	}
+
+	return workouts, err
+}
+
+func GetCurrentYearWorkoutsByUser(userID primitive.ObjectID, currentYear string) ([]primitive.M, error) {
+	dateIndex := mongo.IndexModel{Keys: bson.D{{Key: "date", Value: "text"}}}
+	_, err := workoutDateCollection.Indexes().CreateOne(context.TODO(), dateIndex)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.D{
+		{Key: "$and",
+			Value: bson.A{
+				bson.D{{Key: "UserID", Value: userID}},
+				bson.D{{Key: "$text", Value: bson.D{{Key: "$search", Value: currentYear}}}},
+			},
+		},
+	}
+	cursor, err := workoutDateCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var workouts []bson.M
 	if err = cursor.All(context.TODO(), &workouts); err != nil {
 		return nil, err
 	}
