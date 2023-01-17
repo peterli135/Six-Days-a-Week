@@ -22,7 +22,7 @@ const WorkoutModal = ({workoutModal, setWorkoutModal}) => {
         })
         }
         getExercisesInWorkout();
-    }, []);
+    }, [workoutModal.workoutData._id]);
 
     return (
         <Modal show={workoutModal} onHide={() => setWorkoutModal({state: false, workoutData: {}})}
