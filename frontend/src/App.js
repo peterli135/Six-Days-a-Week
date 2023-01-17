@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import "./App.css";
 import "./scss/custom.scss";
 import Login from "./pages/Login";
 import NavHome from "./components/Navbar";
