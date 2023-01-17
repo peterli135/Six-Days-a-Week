@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Dashboard from "../components/Dashboard.js";
-import {Carousel, Tabs, Tab} from "react-bootstrap";
+import {Container, Carousel, Tabs, Tab} from "react-bootstrap";
 import axios from "axios";
 
 const Home = ({accountDetails, userLoggedIn}) => {
@@ -47,7 +47,6 @@ const Home = ({accountDetails, userLoggedIn}) => {
           })
         }
         getUserWorkouts();
-        console.log("hello")
       }
     }, [filter]);
     console.log(filter);
@@ -67,7 +66,7 @@ const Home = ({accountDetails, userLoggedIn}) => {
             <Tab eventKey="current-year" title="Current Year">
               <Dashboard workoutList={workouts} filter={filter}/>
             </Tab>
-            <Tab eventKey="longer-tab" title="Loooonger Tab">
+            <Tab eventKey="longer-tab" title="Graph View">
     
             </Tab>
           </Tabs>
@@ -76,45 +75,50 @@ const Home = ({accountDetails, userLoggedIn}) => {
     } else {
         // display here the default home screen if no user is logged in
         return (
-          <Carousel>
-            <Carousel.Item>
-              <img
-                className="d-block w-100"
-                src="holder.js/800x400?text=First slide&bg=373940"
-                alt="First slide"
-              />
-              <Carousel.Caption>
-                <h3>First slide label</h3>
-                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <img
-                className="d-block w-100"
-                src="holder.js/800x400?text=Second slide&bg=282c34"
-                alt="Second slide"
-              />
-
-              <Carousel.Caption>
-                <h3>Second slide label</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-            <Carousel.Item>
-              <img
-                className="d-block w-100"
-                src="holder.js/800x400?text=Third slide&bg=20232a"
-                alt="Third slide"
-              />
-
-              <Carousel.Caption>
-                <h3>Third slide label</h3>
-                <p>
-                  Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-                </p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          </Carousel>
+          <Container fluid className="d-flex align-items-center justify-content-center px-4 pt-4" style={{width: "80%"}}>
+            <Carousel>
+              <Carousel.Item>
+                <img
+                  className="d-block w-100"
+                  src="/home-view-current-year.png"
+                  alt="First slide"
+                />
+                <Carousel.Caption>
+                  <h3>View your current year's created workouts</h3>
+                </Carousel.Caption>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img
+                  className="d-block w-100"
+                  src="/home-all-view.png"
+                  alt="Second slide"
+                />
+                <Carousel.Caption>
+                  <h3>View all your created workouts</h3>
+                </Carousel.Caption>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img
+                  className="d-block w-100"
+                  src="/add-workout-modal.png"
+                  alt="Third slide"
+                />
+                <Carousel.Caption>
+                  <h3>Log your workouts</h3>
+                </Carousel.Caption>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img
+                  className="d-block w-100"
+                  src="/workout-exercise-list-view.png"
+                  alt="Fourth slide"
+                />
+                <Carousel.Caption>
+                  <h3>View your exercises in your workouts</h3>
+                </Carousel.Caption>
+              </Carousel.Item>
+            </Carousel>
+          </Container>
         )
     }
 }

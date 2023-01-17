@@ -13,7 +13,6 @@ const Dashboard = ({workoutList, filter}) => {
     // have a useState for what the filter is: filter will have three options: current year, showing a list of the months and the workouts that were added for those months
     // on default, it will open to the current month. onClick, expand them to show all the workouts that were created for that month.
     // another filter will be to show other years, can choose 2022, 2021, 2020, etc. and then another filter will be to show all workouts that have been created
-    // have the onClick expand be similar to that of the design of the NeetCode website, and can put the filters on the top maybe as well.
 
     // puts workouts in the month that the workout was created in
     workoutList && workoutList.forEach((workout) => {
