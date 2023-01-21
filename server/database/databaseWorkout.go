@@ -26,10 +26,10 @@ func GetExerciseByName(exerciseName *string, weight *int, sets *int, reps *int) 
 }
 
 // function to get exercise by its id
-func GetExerciseByID(exerciseID string) (models.Exercise, error) {
+func GetExerciseByID(ExerciseID string) (models.Exercise, error) {
 	var exerciseFound models.Exercise
 
-	primitiveExerciseID, pErr := primitive.ObjectIDFromHex(exerciseID)
+	primitiveExerciseID, pErr := primitive.ObjectIDFromHex(ExerciseID)
 	if pErr != nil {
 		return exerciseFound, pErr
 	}
@@ -80,6 +80,18 @@ func UpdateExercise(ExerciseID string, newExerciseData models.UpdateExercise) (i
 	result, err := exerciseCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
+	}
+	return result, nil
+}
+
+// function to delete an exercise
+func DeleteExercise(ExerciseID string) (interface{}, error) {
+	id, _ := primitive.ObjectIDFromHex(ExerciseID)
+	filter := bson.D{{Key: "_id", Value: id}}
+
+	result, err := exerciseCollection.DeleteOne(context.TODO(), filter)
+	if err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -185,7 +197,18 @@ func UpdateWorkout(WorkoutID string, newWorkoutData models.UpdateWorkoutDate) (i
 	filter := bson.D{{Key: "_id", Value: id}}
 	update := bson.D{{Key: "$set", Value: newWorkoutData}}
 
-	result, err := exerciseCollection.UpdateOne(context.TODO(), filter, update)
+	result, err := workoutDateCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func DeleteWorkout(WorkoutID string) (interface{}, error) {
+	id, _ := primitive.ObjectIDFromHex(WorkoutID)
+	filter := bson.D{{Key: "_id", Value: id}}
+
+	result, err := workoutDateCollection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}

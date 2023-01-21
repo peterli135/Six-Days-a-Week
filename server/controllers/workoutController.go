@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// function to create an exercise (returns the exerciseID)
 func AddExercise() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
@@ -50,6 +51,7 @@ func AddExercise() gin.HandlerFunc {
 	}
 }
 
+// function to create multiple exercises (returns an array of exerciseIDs)
 func AddMultipleExercises() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
@@ -79,6 +81,60 @@ func AddMultipleExercises() gin.HandlerFunc {
 	}
 }
 
+// function to update exercise
+func UpdateExercise() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exerciseID := c.Param("id")
+
+		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
+		if errorMsg != "" {
+			c.JSON(httpStatusCode, gin.H{"error": errorMsg})
+			return
+		}
+
+		var updateExerciseData models.UpdateExercise
+		if err := c.BindJSON(&updateExerciseData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		validationErr := validate.Struct(updateExerciseData)
+		if validationErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+			return
+		}
+
+		updatedExercise, err := database.UpdateExercise(exerciseID, updateExerciseData)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update exercise."})
+			return
+		}
+
+		c.JSON(http.StatusOK, updatedExercise)
+	}
+}
+
+// function to delete an exercise
+func DeleteExercise() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exerciseID := c.Param("id")
+
+		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
+		if errorMsg != "" {
+			c.JSON(httpStatusCode, gin.H{"error": errorMsg})
+			return
+		}
+
+		result, err := database.DeleteExercise(exerciseID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete exercise."})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
+}
+
+// function to create a workout (returns workoutID)
 func AddWorkoutDate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
@@ -125,6 +181,7 @@ func AddWorkoutDate() gin.HandlerFunc {
 	}
 }
 
+// function to get a user's workouts (returns array of user workouts)
 func GetUserWorkouts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
@@ -143,6 +200,7 @@ func GetUserWorkouts() gin.HandlerFunc {
 	}
 }
 
+// function to get a user's current year's workouts (returns an array of user workouts)
 func GetUserWorkoutsCurrentYear() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
@@ -161,6 +219,7 @@ func GetUserWorkoutsCurrentYear() gin.HandlerFunc {
 	}
 }
 
+// function to get the exercises in a workout (returns an array of exercise structs)
 func GetExercisesInWorkout() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		workoutID := c.Param("id")
@@ -187,37 +246,7 @@ func GetExercisesInWorkout() gin.HandlerFunc {
 	}
 }
 
-func UpdateExercise() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		exerciseID := c.Param("id")
-
-		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
-		if errorMsg != "" {
-			c.JSON(httpStatusCode, gin.H{"error": errorMsg})
-			return
-		}
-
-		var updateExerciseData models.UpdateExercise
-		if err := c.BindJSON(&updateExerciseData); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		validationErr := validate.Struct(updateExerciseData)
-		if validationErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
-			return
-		}
-
-		updatedExercise, err := database.UpdateExercise(exerciseID, updateExerciseData)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update exercise."})
-			return
-		}
-
-		c.JSON(http.StatusOK, updatedExercise)
-	}
-}
-
+// function to update a workout
 func UpdateWorkout() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		workoutID := c.Param("id")
@@ -240,10 +269,31 @@ func UpdateWorkout() gin.HandlerFunc {
 		}
 		updatedWorkout, err := database.UpdateWorkout(workoutID, updateWorkoutData)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update exercise."})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update workout."})
 			return
 		}
 
 		c.JSON(http.StatusOK, updatedWorkout)
+	}
+}
+
+// function to delete a workout
+func DeleteWorkout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		workoutID := c.Param("id")
+
+		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
+		if errorMsg != "" {
+			c.JSON(httpStatusCode, gin.H{"error": errorMsg})
+			return
+		}
+
+		result, err := database.DeleteWorkout(workoutID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete workout."})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
 	}
 }
