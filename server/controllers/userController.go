@@ -17,7 +17,7 @@ import (
 
 var validate = validator.New()
 
-// HashPassword function used to encrypt the password before it gets stored in the database.
+// function used to encrypt the password before it gets stored in the database.
 func HashPassword(password string) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
@@ -27,7 +27,7 @@ func HashPassword(password string) string {
 	return string(bytes)
 }
 
-// VerifyPassword function checks the input password and verifies it's the password in the database.
+// function that checks the input password and verifies it's the correct password in the database.
 func VerifyPassword(userPassword string, databasePassword string) (bool, string) {
 	err := bcrypt.CompareHashAndPassword([]byte(databasePassword), []byte(userPassword))
 	check := true
@@ -40,7 +40,7 @@ func VerifyPassword(userPassword string, databasePassword string) (bool, string)
 	return check, msg
 }
 
-// CreateUser is the API used to get a single user.
+// function to create a user
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var user models.User
@@ -89,7 +89,7 @@ func SignUp() gin.HandlerFunc {
 	}
 }
 
-// Login is the API used to get a single user
+// function to login with user credentials (email and password)
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -140,7 +140,7 @@ func Login() gin.HandlerFunc {
 	}
 }
 
-// function to read the session cookie and then return the user that is found from the token
+// function to read the session cookie (returns the user that is found from the token)
 func User() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cookie, err := c.Cookie("jwt")
@@ -157,7 +157,7 @@ func User() gin.HandlerFunc {
 	}
 }
 
-// function to logout the user
+// function to logout the user by removing the cookie
 func Logout() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		storeCookie := &http.Cookie{
