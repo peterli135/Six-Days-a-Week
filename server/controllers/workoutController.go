@@ -14,10 +14,13 @@ import (
 
 func AddExercise() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// check if there is a valid cookie (meaning user is logged in)
-		_, err := c.Cookie("jwt")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
+		_, msg := CheckUserLoggedInCookie(c)
+		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
+			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
 
@@ -53,10 +56,13 @@ func AddExercise() gin.HandlerFunc {
 
 func AddMultipleExercises() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// check if there is a valid cookie (meaning user is logged in)
-		_, err := c.Cookie("jwt")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
+		_, msg := CheckUserLoggedInCookie(c)
+		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
+			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
 
@@ -83,14 +89,12 @@ func AddMultipleExercises() gin.HandlerFunc {
 
 func AddWorkoutDate() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// check if there is a valid cookie (meaning user is logged in)
-		cookie, err := c.Cookie("jwt")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
-			return
-		}
-		user, msg := helper.AuthenticateUser(cookie)
+		user, msg := CheckUserLoggedInCookie(c)
 		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
 			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
@@ -135,14 +139,12 @@ func AddWorkoutDate() gin.HandlerFunc {
 
 func GetUserWorkouts() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// check if there is a valid cookie (meaning user is logged in)
-		cookie, err := c.Cookie("jwt")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
-			return
-		}
-		user, msg := helper.AuthenticateUser(cookie)
+		user, msg := CheckUserLoggedInCookie(c)
 		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
 			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
@@ -159,14 +161,12 @@ func GetUserWorkouts() gin.HandlerFunc {
 
 func GetUserWorkoutsCurrentYear() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// check if there is a valid cookie (meaning user is logged in)
-		cookie, err := c.Cookie("jwt")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
-			return
-		}
-		user, msg := helper.AuthenticateUser(cookie)
+		user, msg := CheckUserLoggedInCookie(c)
 		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
 			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
@@ -185,14 +185,12 @@ func GetExercisesInWorkout() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		workoutID := c.Param("id")
 
-		// check if there is a valid cookie (meaning user is logged in)
-		cookie, err := c.Cookie("jwt")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No valid cookie."})
-			return
-		}
-		_, msg := helper.AuthenticateUser(cookie)
+		_, msg := CheckUserLoggedInCookie(c)
 		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
 			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
@@ -211,6 +209,50 @@ func GetExercisesInWorkout() gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, exercises)
 	}
+}
+
+func EditWorkout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		workoutID := c.Param("id")
+
+		_, msg := CheckUserLoggedInCookie(c)
+		if msg != "" {
+			if msg == "No valid cookie." {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
+			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
+			return
+		}
+
+		workout, err := database.GetWorkoutByID(workoutID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "No workout found."})
+			return
+		}
+
+		exercises, err := database.GetExercisesByWorkoutID(workout)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not find one of the exercises in the database."})
+			return
+		}
+
+		c.JSON(http.StatusOK, exercises)
+	}
+}
+
+// function to check if there is a user logged in (cookie must be valid)
+func CheckUserLoggedInCookie(c *gin.Context) (user models.User, message string) {
+	// check if there is a valid cookie (meaning user is logged in)
+	cookie, err := c.Cookie("jwt")
+	if err != nil {
+		return models.User{}, "No valid cookie."
+	}
+	user, msg := helper.AuthenticateUser(cookie)
+	if msg != "" {
+		return user, msg
+	}
+	return user, ""
 }
 
 //TODO: how to get exercises from the GetUserWorkouts since they are in a ID form...
