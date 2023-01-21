@@ -187,7 +187,38 @@ func GetExercisesInWorkout() gin.HandlerFunc {
 	}
 }
 
-func EditWorkout() gin.HandlerFunc {
+func UpdateExercise() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		exerciseID := c.Param("id")
+
+		_, httpStatusCode, errorMsg := helper.CheckUserLoggedInCookie(c)
+		if errorMsg != "" {
+			c.JSON(httpStatusCode, gin.H{"error": errorMsg})
+			return
+		}
+
+		var updateExerciseData models.UpdateExercise
+		if err := c.BindJSON(&updateExerciseData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		validationErr := validate.Struct(updateExerciseData)
+		if validationErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+			return
+		}
+
+		updatedExercise, err := database.UpdateExercise(exerciseID, updateExerciseData)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update exercise."})
+			return
+		}
+
+		c.JSON(http.StatusOK, updatedExercise)
+	}
+}
+
+func UpdateWorkout() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		workoutID := c.Param("id")
 
@@ -197,18 +228,22 @@ func EditWorkout() gin.HandlerFunc {
 			return
 		}
 
-		workout, err := database.GetWorkoutByID(workoutID)
+		var updateWorkoutData models.UpdateWorkoutDate
+		if err := c.BindJSON(&updateWorkoutData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		validationErr := validate.Struct(updateWorkoutData)
+		if validationErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+			return
+		}
+		updatedWorkout, err := database.UpdateWorkout(workoutID, updateWorkoutData)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "No workout found."})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update exercise."})
 			return
 		}
 
-		exercises, err := database.GetExercisesByWorkoutID(workout)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not find one of the exercises in the database."})
-			return
-		}
-
-		c.JSON(http.StatusOK, exercises)
+		c.JSON(http.StatusOK, updatedWorkout)
 	}
 }
