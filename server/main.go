@@ -43,6 +43,7 @@ func main() {
 	*/
 
 	routes.UserRoutes(router)
+	routes.WorkoutRoutes(router)
 
 	router.Use(middleware.Authentication())
 
